@@ -13,6 +13,12 @@ func main() {
 		fmt.Println(err)
 	}
 
-	fmt.Println(c.DatabaseURL)
+	// fmt.Println(c.DatabaseURL)
+
+	fmt.Println(c.UserName)
+
+	c.SetUser("test_user")
+
+	fmt.Println(c.UserName)
 
 }

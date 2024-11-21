@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -30,6 +31,12 @@ func Read() (Config, error) {
 	return newConfig, nil
 }
 
-func (conf *Config) SetUser() {
+func (conf *Config) SetUser(userName string) {
+	conf.UserName = userName
 
+	err := write(*conf)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 }
