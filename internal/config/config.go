@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 )
 
@@ -66,12 +65,14 @@ func write(conf Config) error {
 	return nil
 }
 
-func (conf *Config) SetUser(userName string) {
+func (conf *Config) SetUser(userName string) error {
 	conf.UserName = userName
 
 	err := write(*conf)
 
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
+
+	return nil
 }
