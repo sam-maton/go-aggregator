@@ -18,6 +18,7 @@ func setupCommands() commands {
 	cmds.register("register", registerUserHandler)
 	cmds.register("reset", resetHandler)
 	cmds.register("users", usersHandler)
+	cmds.register("agg", aggHandler)
 
 	return cmds
 }

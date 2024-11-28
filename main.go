@@ -1,24 +1,14 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"os"
 
 	_ "github.com/lib/pq"
-	"github.com/sam-maton/go-aggregator/internal/rss"
 )
 
 func main() {
-	// run()
-	feed, err := rss.FetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
-
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	fmt.Println(feed.Channel.Item[0].Description)
+	run()
 }
 
 func run() {

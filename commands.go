@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sam-maton/go-aggregator/internal/database"
+	"github.com/sam-maton/go-aggregator/internal/rss"
 )
 
 func loginHandler(state *state, cmd command) error {
@@ -92,6 +93,18 @@ func resetHandler(state *state, cmd command) error {
 	}
 
 	fmt.Print("Database successfully reset")
+	return nil
+}
+
+func aggHandler(state *state, cmd command) error {
+	feed, err := rss.FetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
+
+	if err != nil {
+		return fmt.Errorf("there was an error whilst getting the RSS feed: %w", err)
+	}
+
+	fmt.Println(feed)
+
 	return nil
 }
 
