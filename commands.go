@@ -67,6 +67,23 @@ func registerUserHandler(state *state, cmd command) error {
 	return nil
 }
 
+func usersHandler(state *state, cmd command) error {
+	users, err := state.db.GetUsers(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("there was an error whilst trying to get the list of users: %w", err)
+	}
+
+	for _, v := range users {
+		if v.Name == state.config.UserName {
+			fmt.Printf("* %s (current)\n", v.Name)
+		} else {
+			fmt.Printf("* %s\n", v.Name)
+		}
+	}
+	return nil
+}
+
 func resetHandler(state *state, cmd command) error {
 	err := state.db.DeleteUsers(context.Background())
 
