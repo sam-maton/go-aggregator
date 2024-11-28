@@ -1,6 +1,9 @@
 package main
 
-import "github.com/sam-maton/go-aggregator/internal/config"
+import (
+	"github.com/sam-maton/go-aggregator/internal/config"
+	"github.com/sam-maton/go-aggregator/internal/database"
+)
 
 type command struct {
 	name string
@@ -12,5 +15,6 @@ type commands struct {
 }
 
 type state struct {
+	db     *database.Queries
 	config *config.Config
 }

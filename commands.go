@@ -1,8 +1,13 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/sam-maton/go-aggregator/internal/database"
 )
 
 func loginHandler(state *state, cmd command) error {
@@ -11,13 +16,54 @@ func loginHandler(state *state, cmd command) error {
 	}
 
 	username := cmd.args[0]
-	err := state.config.SetUser(username)
+
+	user, err := state.db.GetUser(context.Background(), username)
+
+	if err != nil {
+		fmt.Println("There was an issue logging in the user:")
+		return err
+	}
+
+	err = state.config.SetUser(user.Name)
 
 	if err != nil {
 		return err
 	}
 
 	fmt.Println("Username " + username + " was set.")
+	return nil
+}
+
+func registerUserHandler(state *state, cmd command) error {
+	if len(cmd.args) < 1 {
+		return errors.New("the register command requires at least one argument")
+	}
+
+	username := cmd.args[0]
+
+	params := database.CreateUserParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      username,
+	}
+
+	user, err := state.db.CreateUser(context.Background(), params)
+
+	if err != nil {
+		fmt.Println("There was an issue registering the user:")
+		return err
+	}
+
+	err = state.config.SetUser(user.Name)
+
+	if err != nil {
+		fmt.Println("There was an issue updating the config after registering the user:")
+		return err
+	}
+
+	fmt.Println("The new user " + user.Name + " was successfully created.")
+
 	return nil
 }
 

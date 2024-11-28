@@ -4,25 +4,12 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sam-maton/go-aggregator/internal/config"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	c, err := config.Read()
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	mainState := state{
-		config: &c,
-	}
-
-	mainCommands := commands{
-		commandMap: map[string]func(state *state, cmd command) error{},
-	}
-
-	mainCommands.register("login", loginHandler)
+	mainState := setupState()
+	mainCommands := setupCommands()
 
 	args := os.Args
 
@@ -37,7 +24,7 @@ func main() {
 		args: args[2:],
 	}
 
-	err = mainCommands.run(&mainState, splitCommand)
+	err := mainCommands.run(&mainState, splitCommand)
 
 	if err != nil {
 		fmt.Println(err)
