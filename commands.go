@@ -30,7 +30,7 @@ func loginHandler(state *state, cmd command) error {
 		return err
 	}
 
-	fmt.Println("Username " + username + " was set.")
+	fmt.Println("Welecome " + username + "! You were logged in successfully.")
 	return nil
 }
 
@@ -64,6 +64,17 @@ func registerUserHandler(state *state, cmd command) error {
 
 	fmt.Println("The new user " + user.Name + " was successfully created.")
 
+	return nil
+}
+
+func resetHandler(state *state, cmd command) error {
+	err := state.db.DeleteUsers(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("couldn't delete users: %w", err)
+	}
+
+	fmt.Print("Database successfully reset")
 	return nil
 }
 
