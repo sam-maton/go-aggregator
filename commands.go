@@ -108,6 +108,37 @@ func aggHandler(state *state, cmd command) error {
 	return nil
 }
 
+func addFeedHandler(state *state, cmd command) error {
+
+	if len(cmd.args) < 2 {
+		return errors.New("the addFeed command requires at least two arguments")
+	}
+
+	user, err := state.db.GetUser(context.Background(), state.config.UserName)
+
+	if err != nil {
+		return fmt.Errorf("there was an error when getting the current user details: %w", err)
+	}
+
+	params := database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      cmd.args[0],
+		Url:       cmd.args[1],
+		UserID:    user.ID,
+	}
+
+	feed, err := state.db.CreateFeed(context.Background(), params)
+
+	if err != nil {
+		return fmt.Errorf("there was an error when creating the new feed: %w", err)
+	}
+
+	fmt.Println(feed)
+	return nil
+}
+
 func (c *commands) register(name string, f func(*state, command) error) {
 	c.commandMap[name] = f
 }

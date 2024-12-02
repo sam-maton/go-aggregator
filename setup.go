@@ -19,6 +19,7 @@ func setupCommands() commands {
 	cmds.register("reset", resetHandler)
 	cmds.register("users", usersHandler)
 	cmds.register("agg", aggHandler)
+	cmds.register("addfeed", addFeedHandler)
 
 	return cmds
 }
