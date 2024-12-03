@@ -139,6 +139,20 @@ func addFeedHandler(state *state, cmd command) error {
 	return nil
 }
 
+func listFeedsHandler(state *state, cmd command) error {
+	feeds, err := state.db.GetFeeds(context.Background())
+
+	if err != nil {
+		return fmt.Errorf("there was an error getting the list of Feeds: %w", err)
+	}
+
+	for _, f := range feeds {
+		fmt.Println(f.Name, f.Url, f.UserName.String)
+	}
+
+	return nil
+}
+
 func (c *commands) register(name string, f func(*state, command) error) {
 	c.commandMap[name] = f
 }
