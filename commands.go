@@ -108,16 +108,10 @@ func aggHandler(state *state, cmd command) error {
 	return nil
 }
 
-func addFeedHandler(state *state, cmd command) error {
+func addFeedHandler(state *state, cmd command, user database.User) error {
 
 	if len(cmd.args) < 2 {
 		return errors.New("the addFeed command requires at least two arguments")
-	}
-
-	user, err := state.db.GetUser(context.Background(), state.config.UserName)
-
-	if err != nil {
-		return fmt.Errorf("there was an error when getting the current user details: %w", err)
 	}
 
 	params := database.CreateFeedParams{
@@ -167,7 +161,7 @@ func listFeedsHandler(state *state, cmd command) error {
 	return nil
 }
 
-func followHandler(state *state, cmd command) error {
+func followHandler(state *state, cmd command, user database.User) error {
 	if len(cmd.args) < 1 {
 		return errors.New("the follow command requires at least one argument")
 	}
@@ -178,12 +172,6 @@ func followHandler(state *state, cmd command) error {
 
 	if err != nil {
 		return fmt.Errorf("there was an error getting the feed: %w", err)
-	}
-
-	user, err := state.db.GetUser(context.Background(), state.config.UserName)
-
-	if err != nil {
-		return fmt.Errorf("there was an error getting the user ID: %w", err)
 	}
 
 	args := database.CreateFeedFollowParams{
@@ -205,12 +193,7 @@ func followHandler(state *state, cmd command) error {
 	return nil
 }
 
-func followingHandler(state *state, cmd command) error {
-	user, err := state.db.GetUser(context.Background(), state.config.UserName)
-
-	if err != nil {
-		return fmt.Errorf("there was an error getting the user: %w", err)
-	}
+func followingHandler(state *state, cmd command, user database.User) error {
 
 	feeds, err := state.db.GetFeedFollowsForUser(context.Background(), user.ID)
 

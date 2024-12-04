@@ -19,10 +19,10 @@ func setupCommands() commands {
 	cmds.register("reset", resetHandler)
 	cmds.register("users", usersHandler)
 	cmds.register("agg", aggHandler)
-	cmds.register("addfeed", addFeedHandler)
+	cmds.register("addfeed", middlewareLogin(addFeedHandler))
 	cmds.register("feeds", listFeedsHandler)
-	cmds.register("follow", followHandler)
-	cmds.register("following", followingHandler)
+	cmds.register("follow", middlewareLogin(followHandler))
+	cmds.register("following", middlewareLogin(followingHandler))
 
 	return cmds
 }
