@@ -214,6 +214,21 @@ func followingHandler(state *state, cmd command, user database.User) error {
 	return nil
 }
 
+func unfollowHandler(state *state, cmd command, user database.User) error {
+
+	args := database.DeleteFeedFollowParams{
+		Url:    cmd.args[0],
+		UserID: user.ID,
+	}
+
+	err := state.db.DeleteFeedFollow(context.Background(), args)
+
+	if err != nil {
+		return fmt.Errorf("there was an error unfollowing the feed: %w", err)
+	}
+	return nil
+}
+
 func (c *commands) register(name string, f func(*state, command) error) {
 	c.commandMap[name] = f
 }

@@ -23,6 +23,7 @@ func setupCommands() commands {
 	cmds.register("feeds", listFeedsHandler)
 	cmds.register("follow", middlewareLogin(followHandler))
 	cmds.register("following", middlewareLogin(followingHandler))
+	cmds.register("unfollow", middlewareLogin(unfollowHandler))
 
 	return cmds
 }
