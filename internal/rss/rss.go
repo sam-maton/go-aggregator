@@ -2,11 +2,15 @@ package rss
 
 import (
 	"context"
+	"database/sql"
 	"encoding/xml"
 	"fmt"
 	"html"
 	"io"
 	"net/http"
+	"time"
+
+	"github.com/sam-maton/go-aggregator/internal/database"
 )
 
 func FetchFeed(ctx context.Context, feedURL string) (*RSSFeed, error) {
@@ -48,4 +52,38 @@ func (feed *RSSFeed) unescape() {
 		feed.Channel.Item[k].Description = html.UnescapeString(v.Description)
 		feed.Channel.Item[k].Title = html.UnescapeString(v.Title)
 	}
+}
+
+func ScrapeFeeds(ctx context.Context, db *database.Queries) error {
+	feed, err := db.GetNextFeedToFetch(ctx)
+
+	if err != nil {
+		return fmt.Errorf("there was an error fetching the next feed: %w", err)
+	}
+
+	markArgs := database.MarkFeedFetchedParams{
+		UpdatedAt: time.Now(),
+		LastFetchedAt: sql.NullTime{
+			Time:  time.Now(),
+			Valid: true,
+		},
+		ID: feed.ID,
+	}
+	err = db.MarkFeedFetched(ctx, markArgs)
+
+	if err != nil {
+		return fmt.Errorf("there was an error marking the feed as fetched: %w", err)
+	}
+
+	rss, err := FetchFeed(ctx, feed.Url)
+
+	if err != nil {
+		return err
+	}
+
+	for _, r := range rss.Channel.Item {
+		fmt.Println("* " + r.Title)
+	}
+
+	return nil
 }
