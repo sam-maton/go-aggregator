@@ -97,13 +97,22 @@ func resetHandler(state *state, cmd command) error {
 }
 
 func aggHandler(state *state, cmd command) error {
-	feed, err := rss.FetchFeed(context.Background(), "https://www.wagslane.dev/index.xml")
 
-	if err != nil {
-		return fmt.Errorf("there was an error whilst getting the RSS feed: %w", err)
+	if len(cmd.args) < 1 {
+		return errors.New("the agg command requires at least one argument")
 	}
 
-	fmt.Println(feed)
+	reqTime, _ := time.ParseDuration(cmd.args[0])
+
+	fmt.Println(reqTime)
+
+	fmt.Printf("Collecting feeds every %v", reqTime)
+
+	ticker := time.NewTicker(reqTime)
+
+	for ; ; <-ticker.C {
+		rss.ScrapeFeeds(context.Background(), state.db)
+	}
 
 	return nil
 }
