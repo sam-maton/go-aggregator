@@ -113,8 +113,6 @@ func aggHandler(state *state, cmd command) error {
 	for ; ; <-ticker.C {
 		rss.ScrapeFeeds(context.Background(), state.db)
 	}
-
-	return nil
 }
 
 func addFeedHandler(state *state, cmd command, user database.User) error {
