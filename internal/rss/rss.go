@@ -82,14 +82,15 @@ func ScrapeFeeds(ctx context.Context, db *database.Queries) error {
 		return err
 	}
 
-	layout := "2006-01-02T15:04:05Z"
+	// layout := "01/02 03:04:05PM '06 -0700"
 
 	for _, r := range rss.Channel.Item {
 
-		publishedAt, err := time.Parse(layout, r.PubDate)
-		if err != nil {
-			return fmt.Errorf("error parsing date: %w", err)
-		}
+		// publishedAt, err := time.Parse(layout, r.PubDate)
+		// if err != nil {
+		// 	fmt.Println(err)
+		// 	return err
+		// }
 
 		postArgs := database.CreatePostParams{
 			ID:          uuid.New(),
@@ -98,11 +99,16 @@ func ScrapeFeeds(ctx context.Context, db *database.Queries) error {
 			Title:       r.Title,
 			Url:         r.Link,
 			Description: r.Description,
-			PublishedAt: publishedAt,
+			PublishedAt: time.Now(),
 			FeedID:      feed.ID,
 		}
 
-		db.CreatePost(ctx, postArgs)
+		_, err = db.CreatePost(ctx, postArgs)
+
+		if err != nil {
+			fmt.Println(err)
+			return err
+		}
 	}
 
 	return nil
