@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sam-maton/go-aggregator/internal/database"
 )
 
@@ -81,8 +82,27 @@ func ScrapeFeeds(ctx context.Context, db *database.Queries) error {
 		return err
 	}
 
+	layout := "2006-01-02T15:04:05Z"
+
 	for _, r := range rss.Channel.Item {
-		fmt.Println("* " + r.Title)
+
+		publishedAt, err := time.Parse(layout, r.PubDate)
+		if err != nil {
+			return fmt.Errorf("error parsing date: %w", err)
+		}
+
+		postArgs := database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       r.Title,
+			Url:         r.Link,
+			Description: r.Description,
+			PublishedAt: publishedAt,
+			FeedID:      feed.ID,
+		}
+
+		db.CreatePost(ctx, postArgs)
 	}
 
 	return nil

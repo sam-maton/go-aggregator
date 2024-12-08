@@ -236,6 +236,25 @@ func unfollowHandler(state *state, cmd command, user database.User) error {
 	return nil
 }
 
+func postsHandler(state *state, cmd command, user database.User) error {
+
+	args := database.GetPostsForUserParams{
+		UserID: user.ID,
+		Limit:  10,
+	}
+	posts, err := state.db.GetPostsForUser(context.Background(), args)
+
+	if err != nil {
+		return fmt.Errorf("there was an error getting your posts: %w", err)
+	}
+
+	for _, v := range posts {
+		fmt.Println("* " + v.Title)
+	}
+
+	return nil
+}
+
 func (c *commands) register(name string, f func(*state, command) error) {
 	c.commandMap[name] = f
 }

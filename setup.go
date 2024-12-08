@@ -24,6 +24,7 @@ func setupCommands() commands {
 	cmds.register("follow", middlewareLogin(followHandler))
 	cmds.register("following", middlewareLogin(followingHandler))
 	cmds.register("unfollow", middlewareLogin(unfollowHandler))
+	cmds.register("posts", middlewareLogin(postsHandler))
 
 	return cmds
 }
